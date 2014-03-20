@@ -23,8 +23,8 @@ void init ( GLvoid )     // Create Some Everyday Functions
 	glClearDepth(1.0f);									// Depth Buffer Setup
 	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
 	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
-	glEnable ( GL_COLOR_MATERIAL );
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable ( GL_COLOR_MATERIAL );						// Enable colouring of textures
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Set persepctive
 }
 
 void display (void)   // Create The Display Function

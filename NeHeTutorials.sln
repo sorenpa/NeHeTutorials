@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson02_BasicPolygons", "Lesson01\Lesson01.vcxproj", "{8DD79F58-6F94-4C83-9676-052B28C09A62}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson02_BasicPolygons", "Lesson02_Basics\Lesson02_BasicPolygons.vcxproj", "{8DD79F58-6F94-4C83-9676-052B28C09A62}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lesson03_AddingColour", "lesson03\lesson03.vcxproj", "{FFF48D08-92B7-4D19-920E-EF03F9381A6B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lesson03_AddingColour", "lesson03_Colour\lesson03_Colour.vcxproj", "{FFF48D08-92B7-4D19-920E-EF03F9381A6B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson04_Rotation", "Lesson04_Rotation\Lesson04_Rotation.vcxproj", "{68E6B169-4259-4578-BC1C-16B5D9861BD5}"
 EndProject
@@ -11,31 +11,31 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson05_3Dobjects", "Lesso
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson06_TextureMapping", "Lesson06_TextureMapping\Lesson06_TextureMapping.vcxproj", "{E98FC4AB-FA49-4EA7-8A66-705D91680523}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson07_TextureFiltering_Lightning_KeyboardCtrl", "Lesson07_TextureFiltering_Lightning_KeyboardCtrl\Lesson07_TextureFiltering_Lightning_KeyboardCtrl.vcxproj", "{5ACCA592-45F5-4185-8BCD-5B8CF84A4842}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson07_TextureFilteringLightning", "Lesson07_TextureFilteringLightning\Lesson07_TextureFilteringLightning.vcxproj", "{5ACCA592-45F5-4185-8BCD-5B8CF84A4842}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson08_Blending", "Lesson08\Lesson08.vcxproj", "{2F36212B-8A4F-43A0-83F6-C8A0DD358F59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson08_Blending", "Lesson08_Blending\Lesson08_Blending.vcxproj", "{2F36212B-8A4F-43A0-83F6-C8A0DD358F59}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson09_Moving_Bitmaps", "Lesson09_Moving_Bitmaps\Lesson09_Moving_Bitmaps.vcxproj", "{BF160A59-584F-4A5E-A007-A8515C11A5C0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson09_MovingBitmaps", "Lesson09_MovingBitmaps\Lesson09_MovingBitmaps.vcxproj", "{BF160A59-584F-4A5E-A007-A8515C11A5C0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson10_Moving_The_Camera_FPS_Style", "Lesson10_Moving_The_Camera_FPS-Style\Lesson10_Moving_The_Camera_FPS-Style.vcxproj", "{5A758352-F474-4CEE-866F-8993ADAED1BF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson10_MovingInAWorld", "Lesson10_MovingInAWorld\Lesson10_MovingInAWorld.vcxproj", "{5A758352-F474-4CEE-866F-8993ADAED1BF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson11_WavingTextures", "Lesson11_WavingTextures\Lesson11_WavingTextures.vcxproj", "{3823346A-8AE3-43D4-BB8D-54B0E1ACE771}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson12_DisplayLists", "Lesson12\Lesson12.vcxproj", "{5ED8A6B3-3B33-45F6-8078-A5962CE1032F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson12_DisplayLists", "Lesson12_DisplayLists\Lesson12_DisplayLists.vcxproj", "{5ED8A6B3-3B33-45F6-8078-A5962CE1032F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson13_BitmapFonts", "Lesson12_BitmapFonts\Lesson12_BitmapFonts.vcxproj", "{B39B88D9-0BFE-43DC-8A61-1AEFAB0DB8E2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson13_BitmapFonts", "Lesson13_BitmapFonts\Lesson13_BitmapFonts.vcxproj", "{B39B88D9-0BFE-43DC-8A61-1AEFAB0DB8E2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson14_OutlineFonts", "Lesson14_OutlineFonts\Lesson14_OutlineFonts.vcxproj", "{681449E0-22B9-4145-AAB4-32D63D1482EB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson15_TextureMappedFonts", "Lesson15_TextureMappedFonts\Lesson15_TextureMappedFonts.vcxproj", "{4C9B999B-C946-4500-8DC9-F6E869EBC1D4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson16_Fog", "Lesson16\Lesson16.vcxproj", "{130DA253-C6BF-4A0A-AE8E-912B07177A13}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson16_Fog", "Lesson16_Fog\Lesson16_Fog.vcxproj", "{130DA253-C6BF-4A0A-AE8E-912B07177A13}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson17_2D_TextureFonts", "Lesson17_2D_TextureFonts\Lesson17_2D_TextureFonts.vcxproj", "{8F626A50-1E3B-4E4D-AE23-97667D212FE3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson17_2DTextureFonts", "Lesson17_2DTextureFonts\Lesson17_2DTextureFonts.vcxproj", "{8F626A50-1E3B-4E4D-AE23-97667D212FE3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson18_Quadrics", "Lesson18_Quadrics\Lesson18_Quadrics.vcxproj", "{13E25134-C5F7-4C27-95E5-D025C6C374DE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson19_ParticleEngine", "Lesson19\Lesson19.vcxproj", "{A9BA2BA2-EE8B-417B-92F8-C89BD3F9E367}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson19_ParticleEngine", "Lesson19_ParticleEngine\Lesson19_ParticleEngine.vcxproj", "{A9BA2BA2-EE8B-417B-92F8-C89BD3F9E367}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson20_Masking", "Lesson20_Masking\Lesson20_Masking.vcxproj", "{7DAC31C5-3F51-4B1D-9C3E-BD6777B9720F}"
 EndProject

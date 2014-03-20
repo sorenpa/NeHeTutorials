@@ -10,10 +10,12 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Lesson07.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5A758352-F474-4CEE-866F-8993ADAED1BF}</ProjectGuid>
-    <RootNamespace>Lesson10_Moving_The_Camera_FPSStyle</RootNamespace>
-    <ProjectName>Lesson10_Moving_The_Camera_FPS_Style</ProjectName>
+    <ProjectGuid>{5ACCA592-45F5-4185-8BCD-5B8CF84A4842}</ProjectGuid>
+    <RootNamespace>Lesson07_TextureFiltering_Lightning_KeyboardCtrl</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -63,9 +65,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Lesson10.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
