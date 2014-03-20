@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson02_BasicPolygons", "Lesson02_Basics\Lesson02_BasicPolygons.vcxproj", "{8DD79F58-6F94-4C83-9676-052B28C09A62}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lesson03_AddingColour", "lesson03_Colour\lesson03_Colour.vcxproj", "{FFF48D08-92B7-4D19-920E-EF03F9381A6B}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson04_Rotation", "Lesson04_Rotation\Lesson04_Rotation.vcxproj", "{68E6B169-4259-4578-BC1C-16B5D9861BD5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson05_3Dobjects", "Lesson05_3Dobjects\Lesson05_3Dobjects.vcxproj", "{4E9FD5CE-96B5-4211-805A-CB6F7D881529}"
@@ -43,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson21_LinesAntialiasingT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lesson22_BumpmappingMultitexturing", "Lesson22_BumpmappingMultitexturing\Lesson22_BumpmappingMultitexturing.vcxproj", "{41A5C6F2-87C4-4FC1-86A3-FB690711D168}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lesson03_AddingColour", "Lesson03_Colour\Lesson03_Colour.vcxproj", "{FFF48D08-92B7-4D19-920E-EF03F9381A6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -53,10 +53,6 @@ Global
 		{8DD79F58-6F94-4C83-9676-052B28C09A62}.Debug|Win32.Build.0 = Debug|Win32
 		{8DD79F58-6F94-4C83-9676-052B28C09A62}.Release|Win32.ActiveCfg = Release|Win32
 		{8DD79F58-6F94-4C83-9676-052B28C09A62}.Release|Win32.Build.0 = Release|Win32
-		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Debug|Win32.ActiveCfg = Debug|Win32
-		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Debug|Win32.Build.0 = Debug|Win32
-		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Release|Win32.ActiveCfg = Release|Win32
-		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Release|Win32.Build.0 = Release|Win32
 		{68E6B169-4259-4578-BC1C-16B5D9861BD5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{68E6B169-4259-4578-BC1C-16B5D9861BD5}.Debug|Win32.Build.0 = Debug|Win32
 		{68E6B169-4259-4578-BC1C-16B5D9861BD5}.Release|Win32.ActiveCfg = Release|Win32
@@ -133,6 +129,10 @@ Global
 		{41A5C6F2-87C4-4FC1-86A3-FB690711D168}.Debug|Win32.Build.0 = Debug|Win32
 		{41A5C6F2-87C4-4FC1-86A3-FB690711D168}.Release|Win32.ActiveCfg = Release|Win32
 		{41A5C6F2-87C4-4FC1-86A3-FB690711D168}.Release|Win32.Build.0 = Release|Win32
+		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Debug|Win32.Build.0 = Debug|Win32
+		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Release|Win32.ActiveCfg = Release|Win32
+		{FFF48D08-92B7-4D19-920E-EF03F9381A6B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
