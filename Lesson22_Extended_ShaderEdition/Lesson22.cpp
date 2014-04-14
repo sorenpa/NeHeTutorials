@@ -1,25 +1,21 @@
 /*
-Nromalmapping (aka. Bumpmapping):
-1:The basic idea behind a normal map, is to make a flat surface look more realistic by telling
-the OpenGL how light should be reflected by that surface. Without a normal map the light for
-a surface is calculated from the normal vector perpendicular to the surface, and a vector from
-the vertices of that surface to the light source(s). 
+Intro: This solution is an extension to the NeHe lesson 22 on bump/normal mapping. The NeHe tutorial use an emboss
+Technique to do the normal mapping, and further performs the multitexturing in C++ code. The modern way to map
+is using programmable shaders and the GLSL language.
 
-2: A normal map is a "texture" that stores normal vectors per pixel of the surface. The vectors are
-store as RGB values in an image, where R=x component, G=y component and B=Z component of the normal.
-Since the normal always points away from the surface, and the normal is expressed in the "tangent-space"
-(a vector space where the x,y plane is the surface it selt), then the z component (B) is dominant.
-Thus normal maps are bluish in colour when viewing at them in a 2D image processing program.
+Shaders: A shader is a programmable part of the graphics pipeline. With a shader it is thus possible to alter
+the way the graphics hardware handles the different parts of the pipeline. Since we are controlling the hardware
+the usage of shaders can speed up the performance of code and ofcourse some things is easier to do. In this extended
+lesson we are going to program 2 shaders. The Vertex shader and the Fragment shader.
 
-3:As previously mentioned, the normals in the normal map is expressed in the tangent space. This hints
-thar we have a basis for this vector space (ofcourse we do). What it also suggest is that normal
-mapping involves multiple coordinate systems. In fact the below code involves World,Model and Tangent
-spaces, and in order to change between them we use the inverse of the model view matrix, to change from
-world to object space, and the inverse TBN-matrix (Tangent, Tinormal, Normal which are the basis vectors for 
-the tangent space - changing per vertex), to change from model to surface coordinates.
+Vertex Shader: A vertex shader is as the name dictates a program that can alter a vertex. The vertex shader is a
+program that acts on each vertex passed to it, from previious steps of the graphics pipeline. The vertex shader can
+mainly alter the position of vertices.
 
-4: The modern way of applying a normal map to the scene is by using shaders, which we will look at in
-an extension to NeHe lesson22.
+Fragment Shader: A fragment shader is performed at a later stage than the Vertex Shader. The fragment shader is a small
+program that acts on fragments. A fragment is in essence a pixel, but it can hold additional data than just the color, and
+thus it is given a different name. So a fragment shader is run once per pixel.
+
 */
 
 #include <windows.h>	// Standard Header For Most Programs
@@ -28,24 +24,27 @@ an extension to NeHe lesson22.
 #include <GL/glew.h>    //header for GLEW (GL extensions loading wrangler library)
 #include <GL/glut.h>    // The GL Utility Toolkit (Glut) Header
 #include <GL/SOIL.h>	//Image loading library header. Library also referenced by linker
-#include "mathlib.h"    //Header file for a custom math library
-#include "Cube.h";      //Header file for a cube object
+#include "ShaderUtilities.h"
+#include "Cube.h"      //Header file for a cube object
 
-#define NUM_TEXTURES 7
-#define NUM_NORMAL_MAPS 7
+#define NUM_TEXTURES 8
+#define NUM_NORMAL_MAPS 8
 
-bool extensionsSupported=true;  //Is the extensions used bu this tutorial supported
+bool b_extensionsSupported=true;  //Is the extensions used bu this tutorial supported
 GLint maxTexelUnits=1;  		// Number Of Texel-Pipelines. This Is At Least 1.
 
-bool IsLightEnabled = true;
-bool    IsBumpEnabled=true;													// Do Bumpmapping?
-GLuint  textureMapIndex=0;                               // Index of the texture used
+GLuint vertexShader; //Storage of the vertex shader ID
+GLuint fragmentShader; //Storage of the fragment shader ID
+GLuint shaderProgram; //Storage of the shader program ID
+
+GLuint  colorMapIndex=0;                               // Index of the texture used
 GLuint  normalMapIndex=0;                               // Stores the index of the normal map used
-GLuint  textureMap[NUM_TEXTURES];                             // Storage For 3 Textures
+GLuint  colorMap[NUM_TEXTURES];                             // Storage For 3 Textures
 GLuint  normalMap[NUM_NORMAL_MAPS];                                // Our Bumpmappings
 
 GLfloat LightAmbient[]  = { 0.2f, 0.2f, 0.2f};                  // Ambient Light Is 20% White
-GLfloat LightDiffuse[]  = { 1.0f, 1.0f, 1.0f};                  // Diffuse Light Is White
+GLfloat LightDiffuse[]  = { 0.9f, 0.9f, 1.0f};                  // Diffuse Light Is White
+GLfloat LightSpecular[]  = { 1.0f, 1.0f, 1.0f};  
 GLfloat LightPosition[] = { 0.0f, 0.0f, 2.0f};                  // Position Is Somewhat In Front Of Screen
 GLfloat Gray[]      = { 0.5f, 0.5f, 0.5f, 1.0f};
 
@@ -55,29 +54,25 @@ GLfloat zrot = 0.0f;
 GLfloat zoom = 5.0f;
 
 Cube cube = Cube(2,2,2);
-Cube cube2 = Cube(3,3,3);
 
 
-
+//Checks OpenGL version and extensions run time
 bool CheckSystemCompatibility()
 {
     //Check that multitexture extenstion is available run time.
-    if (GLEW_ARB_multitexture && 
-        GLEW_ARB_texture_cube_map && 
-        GLEW_ARB_texture_env_combine &&
-        GLEW_ARB_texture_env_dot3)
+    if (glewIsSupported("GL_VERSION_2_0") && 
+        GLEW_ARB_vertex_shader && //Check for vertex shader support
+        GLEW_ARB_fragment_shader) //Check for fragment shader support
     {
         return true;
     }
 
-    return false;
+    return 0;
 }
 
 int LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
 {
-    
-
-    textureMap[0] = SOIL_load_OGL_texture
+    colorMap[0] = SOIL_load_OGL_texture
     (
        "Data/Texture1.jpg",
         SOIL_LOAD_AUTO,
@@ -86,13 +81,13 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
     
     // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[0]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     
-    textureMap[1] = SOIL_load_OGL_texture
+    colorMap[1] = SOIL_load_OGL_texture
     (
        "Data/Texture2.png",
         SOIL_LOAD_AUTO,
@@ -101,14 +96,14 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
     
     // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[1]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 
-    textureMap[2] = SOIL_load_OGL_texture
+    colorMap[2] = SOIL_load_OGL_texture
     (
        "Data/Texture3.png",
         SOIL_LOAD_AUTO,
@@ -117,13 +112,13 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
     
     // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[2]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[2]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    textureMap[3] = SOIL_load_OGL_texture
+    colorMap[3] = SOIL_load_OGL_texture
     (
        "Data/Texture4.png",
         SOIL_LOAD_AUTO,
@@ -132,13 +127,13 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
 
         // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[3]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[3]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
  
-    textureMap[4] = SOIL_load_OGL_texture
+    colorMap[4] = SOIL_load_OGL_texture
     (
        "Data/Texture5.png",
         SOIL_LOAD_AUTO,
@@ -147,13 +142,13 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
     
     // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[4]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[4]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    textureMap[5] = SOIL_load_OGL_texture
+    colorMap[5] = SOIL_load_OGL_texture
     (
        "Data/Texture6.jpg",
         SOIL_LOAD_AUTO,
@@ -162,13 +157,13 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
     
     // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[5]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[5]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    textureMap[6] = SOIL_load_OGL_texture
+    colorMap[6] = SOIL_load_OGL_texture
     (
        "Data/Texture7.jpg",
         SOIL_LOAD_AUTO,
@@ -177,7 +172,22 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     );
     
     // Typical Texture Generation Using Data From The Bitmap
-    glBindTexture(GL_TEXTURE_2D, textureMap[6]);
+    glBindTexture(GL_TEXTURE_2D, colorMap[6]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    colorMap[7] = SOIL_load_OGL_texture
+    (
+       "Data/Texture8.png",
+        SOIL_LOAD_AUTO,
+        SOIL_CREATE_NEW_ID,
+        SOIL_FLAG_INVERT_Y
+    );
+    
+    // Typical Texture Generation Using Data From The Bitmap
+    glBindTexture(GL_TEXTURE_2D, colorMap[7]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -185,7 +195,7 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
 
     normalMap[0] = SOIL_load_OGL_texture
     (
-       "Data/Normal1.jpg",
+       "Data/Normal1.png",
         SOIL_LOAD_AUTO,
         SOIL_CREATE_NEW_ID,
         SOIL_FLAG_INVERT_Y
@@ -288,32 +298,54 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-   
+    normalMap[7] = SOIL_load_OGL_texture
+    (
+       "Data/Normal8.png",
+        SOIL_LOAD_AUTO,
+        SOIL_CREATE_NEW_ID,
+        SOIL_FLAG_INVERT_Y
+    );
+    
+    // Typical Texture Generation Using Data From The Bitmap
+    glBindTexture(GL_TEXTURE_2D, normalMap[7]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
     for(int i = 0;i<NUM_TEXTURES;i++)
     {
-        if(normalMap[i] == 0)
+        if(colorMap[i] == 0)
         {
             return false;
         }
     }
 
-        for(int i = 0;i<NUM_TEXTURES;i++)
+    for(int i = 0;i<NUM_TEXTURES;i++)
     {
-        if(textureMap[i] == 0)
+        if(normalMap[i] == 0)
         {
+
             return false;
         }
     }
-    
     
     return true;                                        // Return Success
     
 }
 
+void initShaders()
+{
+    
+    GenerateShader("Shaders/NormalMap.vert",GL_VERTEX_SHADER, vertexShader);
+    GenerateShader("Shaders/NormalMap.frag",GL_FRAGMENT_SHADER, fragmentShader);
+    GenerateShaderProgram(vertexShader,fragmentShader,shaderProgram);
+}
 
 void initLights(void) {
         glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);              // Load Light-Parameters into GL_LIGHT1
         glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);
+        glLightfv(GL_LIGHT1, GL_SPECULAR, LightSpecular);
         glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT1);
@@ -322,26 +354,49 @@ void initLights(void) {
 
 void init ( GLvoid )     // Create Some Everyday Functions
 {
+    printf("Initializing glew");
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
         /* Problem: glewInit failed, something is seriously wrong. */
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+        exit(1);
     }
+    else
+    {
+        printf(" - Success\n");
+    }
+
 
     //Check extension availability runtime
-    if(extensionsSupported = CheckSystemCompatibility())
+    printf("Checking OpenGL extensions");
+    if(CheckSystemCompatibility())
     {
-        IsBumpEnabled = true; 
+        printf(" - Success\n");
     }
-
-    //Load the textures with SOIL
-    LoadGLTextures();
+    else
+    {
+        printf("The runtime system eithe does not supprt OpenGL 2.0 or required extensions not supported.\n");
+        exit(1);
+    }
     
+    //Load the textures with SOIL
+    printf("Loading textures");
+    if(LoadGLTextures())
+    {
+        printf(" - Success\n");
+    }
+    else
+    {
+        printf(" - Failed\n");
+    }
+    
+    initShaders();
+
     //Init lights
     initLights();
 
-    glEnable(GL_TEXTURE_2D);							// Enable textureMapping!
+    glEnable(GL_TEXTURE_2D);							// Enable colorMapping!
     glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
     glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background
     glColor3f(0.5f,0.5f,0.5f);                          // Base Color
@@ -352,50 +407,24 @@ void init ( GLvoid )     // Create Some Everyday Functions
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
     glEnable(GL_CULL_FACE);
- 
-    //initialize cubes
-    cube.m_drawColorMap = true;
-    cube.m_drawNormalMap = true;
-    cube2.m_drawColorMap = true;
-    cube2.m_drawNormalMap = true;
-    cube2.m_rotation.x = 25.0f;
-    cube2.m_rotation.y = 10.0f;
-    cube2.m_rotation.z = 0.0f;
+
 }
 
 
 void display (void)   // Create The Display Function
 {
-
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);         // Clear The Screen And The Depth Buffer
     glLoadIdentity();
-    
 
-
-    //Setup rotation and light for the cube.
-    cube.m_posistion = Vector3f(0.0f,0.0f,-zoom);
-    cube.m_colorMap = textureMap[textureMapIndex];
-    cube.m_normalMap = normalMap[normalMapIndex];
-    
-    //Could probably be fetched from the cube object draw function by calling a GL function
-    cube.m_worldSpaceLightPosition = Vector4f(LightPosition[0], LightPosition[1], LightPosition[2], 1.0f);
+    cube.m_objectPosistion[2] = -zoom;
+    cube.SetColorMap(colorMap[colorMapIndex]);
+    cube.SetNormalMap(normalMap[normalMapIndex]);
+    cube.SetShader(shaderProgram);
     cube.Draw();
-
+ 
     glLoadIdentity();									// Reset The Current Modelview Matrix
 
-    //Setup rotation and light for the cube.
-    cube2.m_posistion = Vector3f(-3.0f,2.0f,-7.0f);
-    cube2.m_colorMap = textureMap[textureMapIndex];
-    cube2.m_normalMap = normalMap[normalMapIndex];
-    
-    //Could probably be fetched from the cube object draw function by calling a GL function
-    cube2.m_worldSpaceLightPosition = Vector4f(LightPosition[0], LightPosition[1], LightPosition[2], 1.0f);
-    cube2.Draw();
-
-    glLoadIdentity();									// Reset The Current Modelview Matrix
-    
-    
     glutSwapBuffers ( );
     // Swap The Buffers To Not Be Left With A Clear Screen
 }
@@ -422,28 +451,24 @@ void keyboard ( unsigned char key, int x, int y )  // Create Keyboard Function
       exit ( 0 );   // Exit The Program
       break;        // Ready For Next Case
     case 113: //q
-        cube.m_rotationSpeed.z -= 0.001f;
-        cube2.m_rotationSpeed.z += 0.001f;
+        cube.m_rotationSpeed[2] -= 0.001f;
         break;
     case 119: //w
-        cube.m_rotationSpeed.x += 0.001f;
-        cube2.m_rotationSpeed.x -= 0.001f;
+        cube.m_rotationSpeed[0] += 0.001f;
         break;
     case 101: //e
-        cube.m_rotationSpeed.z += 0.001f;
-        cube2.m_rotationSpeed.z -= 0.001f;
+        cube.m_rotationSpeed[2] += 0.001f;
         break;
     case 97: //a
-        cube.m_rotationSpeed.y -= 0.001f;
-        cube2.m_rotationSpeed.y += 0.001f;
+        cube.m_rotationSpeed[1] -= 0.001f;
         break; 
     case 115: //s
-        cube.m_rotationSpeed.x -= 0.001f;
-        cube2.m_rotationSpeed.x += 0.001f;
+        cube.m_rotationSpeed[0] -= 0.001f;
+
         break;
     case 100: //d
-        cube.m_rotationSpeed.y += 0.001f;
-        cube2.m_rotationSpeed.y -= 0.001f;
+        cube.m_rotationSpeed[1] += 0.001f;
+
         break;
     case 120: //x
         zoom -= 0.5f;
@@ -452,42 +477,29 @@ void keyboard ( unsigned char key, int x, int y )  // Create Keyboard Function
         zoom += 0.5f;
         break;
     case 102: //f
-        textureMapIndex = (textureMapIndex + 1)%NUM_TEXTURES; //Cycle through textures
-        normalMapIndex = textureMapIndex;
+        colorMapIndex = (colorMapIndex + 1)%NUM_TEXTURES; //Cycle through textures
+        normalMapIndex = colorMapIndex;
         break;
     case 103: //g
-        cube.m_drawNormalMap = !cube.m_drawNormalMap;
-        cube2.m_drawNormalMap = !cube2.m_drawNormalMap;
+
+
         break;
     case 104: //h
         //Stop rotation
-        cube.m_rotationSpeed.x = 0.0f;
-        cube.m_rotationSpeed.y = 0.0f;
-        cube.m_rotationSpeed.z = 0.0f;
+        cube.m_rotationSpeed[0] = 0.0f;
+        cube.m_rotationSpeed[1] = 0.0f;
+        cube.m_rotationSpeed[2] = 0.0f;
 
         //Reset rotations
-        cube.m_rotation.x = 0.0f;
-        cube.m_rotation.y = 0.0f;
-        cube.m_rotation.z = 0.0f;
-
-        //Stop rotation
-        cube2.m_rotationSpeed.x = 0.0f;
-        cube2.m_rotationSpeed.y = 0.0f;
-        cube2.m_rotationSpeed.z = 0.0f;
-
-        //Reset rotations
-        cube2.m_rotation.x = 0.0f;
-        cube2.m_rotation.y = 0.0f;
-        cube2.m_rotation.z = 0.0f;
+        cube.m_rotation[0] = 0.0f;
+        cube.m_rotation[1] = 0.0f;
+        cube.m_rotation[2] = 0.0f;
         break;
     case 106: //j
         break;
     case 114: //r
-        normalMapIndex = (normalMapIndex + 1)%NUM_NORMAL_MAPS; //Cycle through normal maps
         break;
     case 116: //t
-        cube.m_drawColorMap = !cube.m_drawColorMap;
-        cube2.m_drawColorMap = !cube2.m_drawColorMap;
         break;  
     default:        // Now Wrap It Up
       break;
@@ -515,7 +527,7 @@ int main(int argc, char** argv)   // Create Main Function For Bringing It All To
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE); // Display Mode
   glutInitWindowSize(500, 500); // If glutFullScreen wasn't called this is the window size
   glutCreateWindow("NeHe's OpenGL Framework"); // Window Title (argv[0] for current directory as title)
-  glutFullScreen();          // Put Into Full Screen
+  //glutFullScreen();          // Put Into Full Screen
   
   init();
 
