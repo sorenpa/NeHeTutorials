@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4DF30503-D54A-4EA1-9B0F-17D52F1278FA}</ProjectGuid>
-    <RootNamespace>Lesson23_SphereMappingQuadrics</RootNamespace>
+    <ProjectGuid>{66A87204-C6B6-4492-B239-9A28BF3FA135}</ProjectGuid>
+    <RootNamespace>Lesson28_BizierPatches</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -65,7 +65,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Lesson23.cpp" />
+    <ClCompile Include="Lesson28.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

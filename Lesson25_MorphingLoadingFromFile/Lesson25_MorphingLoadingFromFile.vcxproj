@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4DF30503-D54A-4EA1-9B0F-17D52F1278FA}</ProjectGuid>
-    <RootNamespace>Lesson23_SphereMappingQuadrics</RootNamespace>
+    <ProjectGuid>{98214068-7283-4880-96FF-7EBA8F20C334}</ProjectGuid>
+    <RootNamespace>Lesson25_MorphingLoadingFromFile</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -47,7 +47,6 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -65,7 +64,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Lesson23.cpp" />
+    <ClCompile Include="Lesson25.cpp" />
+    <ClCompile Include="Object3D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Object3D.h" />
+    <ClInclude Include="ObjectLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

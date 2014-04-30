@@ -34,7 +34,7 @@ public:
     void SetNormalMap(GLuint TextureID);
 
     //Position/Rotation
-    GLfloat m_objectPosistion[4];
+    GLfloat m_objectPosistion[3];
     GLfloat m_rotation[3]; //[x-angle,y-angle,z-angle]
     GLfloat m_rotationSpeed[3]; //rotation angles per frame
  
